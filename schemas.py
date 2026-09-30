@@ -1,35 +1,52 @@
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict,EmailStr ,Field
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
 
 class UserBase(BaseModel):
     username: str = Field(min_length=3, max_length=50)
     email: EmailStr = Field(max_length=120)
 
+
 class UserCreate(UserBase):
-    pass
+    password: str = Field(min_length=8)
 
-class UserResponse(UserBase):
+
+class UserPublic(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-
     id: int
+    username: str
     image_file: str | None
     image_path: str
 
-class UserUpdate (BaseModel):
+
+class UserPrivate(UserPublic):
+    email: EmailStr
+
+
+class UserUpdate(BaseModel):
     username: str | None = Field(default=None, min_length=3, max_length=50)
     email: EmailStr | None = Field(default=None, max_length=120)
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 
 class PostBase(BaseModel):
     title: str = Field(min_length=3, max_length=100)
     content: str = Field(min_length=3)
 
+
 class PostCreate(PostBase):
-    user_id: int
+    pass
+
 
 class PostUpdate(BaseModel):
-    title: str | None = Field(default= None, min_length=3, max_length=100)
-    content: str | None = Field(default= None, min_length=3)
+    title: str | None = Field(default=None, min_length=3, max_length=100)
+    content: str | None = Field(default=None, min_length=3)
+
 
 class PostResponse(PostBase):
     model_config = ConfigDict(from_attributes=True)
@@ -37,4 +54,4 @@ class PostResponse(PostBase):
     id: int
     user_id: int
     date_posted: datetime
-    author: UserResponse
+    author: UserPublic
