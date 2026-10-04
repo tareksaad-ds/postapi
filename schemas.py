@@ -34,6 +34,19 @@ class Token(BaseModel):
     token_type: str
 
 
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr = Field(max_length=120)
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str = Field(min_length=8)
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8)
+
 class PostBase(BaseModel):
     title: str = Field(min_length=3, max_length=100)
     content: str = Field(min_length=3)
@@ -55,3 +68,10 @@ class PostResponse(PostBase):
     user_id: int
     date_posted: datetime
     author: UserPublic
+
+class PaginatedPostResponse(BaseModel):
+    posts: list[PostResponse]
+    total: int
+    limit: int
+    skip: int
+    has_more: bool

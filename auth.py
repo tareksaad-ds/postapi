@@ -12,6 +12,9 @@ from database import get_db
 import models
 from config import settings
 
+import hashlib
+import secrets
+
 password_hash = PasswordHash.recommended()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/users/token")
@@ -24,6 +27,15 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return password_hash.verify(password=plain_password, hash=hashed_password)
 
+def generate_reset_token() -> str:
+    # Generate a random token using secrets module
+    token = secrets.token_urlsafe(32)  # Generates a secure random URL-safe token
+    return token
+
+def hash_reset_token(token: str) -> str:
+    # Hash the token using SHA-256 
+    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    return token_hash
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
