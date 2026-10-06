@@ -134,7 +134,7 @@ async def remove_post(post_id: int, current_user:CurrentUser, db: Annotated[Asyn
         )
     if post.user_id != current_user.id:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Not allowed to update this post!"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Not allowed to update this post."
         )
     await db.delete(post)
     await db.commit()
